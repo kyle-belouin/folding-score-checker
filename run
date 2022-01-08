@@ -12,6 +12,13 @@ fi
 
 last_run=$(./script/score-checker $id | awk '{ print $2 }')
 
+if [ ! -f ".origin" ]; then
+    echo "Defining origin score..."
+    echo $last_run | tee .origin
+fi
+
+origin=$(cat .origin)
+
 if [ $delay -lt 1800 ]; then
     echo -e "\n[INFO]: The delay provided is less than 30 minutes ($1 seconds)\n[INFO]: Work units typically take hours to complete additionally, the API poll rate is unknown.\n[INFO]: It is recommended to set the delay greater than 1800 seconds (one half hour).\n\n##########"
 fi
@@ -27,10 +34,12 @@ while true; do
 	fetch="$(./script/score-checker $id)"
 	cur_run=$(echo $fetch | awk '{ print $2 }');
 	diff=$(($cur_run-$last_run))
+	diff_first=$(($cur_run-$origin))
 
 	echo "Previous run: $last_run points" | tee -a log.txt
 	echo "This run: $cur_run points" | tee -a log.txt
-	echo -e "Difference: $diff points\n" | tee -a log.txt
+	echo -e "Difference since start of this run: $diff points" | tee -a log.txt
+	echo -e "Difference since first run: $diff_first points\n"
 
 	last_run=$cur_run
 
