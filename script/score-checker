@@ -1,0 +1,16 @@
+#!/bin/bash
+
+jq='/usr/bin/jq'
+tee='/usr/bin/tee'
+date=$(date +%F-%H%M%S)
+id=$1
+
+if [ "$#" -ne 1 ]; then
+   echo "You must supply your user ID as a parameter"
+   echo "For example: ./score-checker 456789"
+   exit 1
+fi
+
+output="$date $(curl -s https://api2.foldingathome.org/uid/$1 | $jq .score)"
+
+echo $output

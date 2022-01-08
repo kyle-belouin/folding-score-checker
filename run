@@ -1,0 +1,42 @@
+#!/bin/bash
+
+delay=$1
+id=$2
+
+if [ "$#" -ne 2 ]; then
+    echo -e "\n[ERROR]: You must supply two parameters, your delay (seconds) and your user ID respectively"
+    echo "For example: ./run 3600 867530"
+    echo -e "Please try again\n"
+    exit 1
+fi
+
+last_run=$(./script/score-checker $id | awk '{ print $2 }')
+
+if [ $delay -lt 1800 ]; then
+    echo -e "\n[INFO]: The delay provided is less than 30 minutes ($1 seconds)\n[INFO]: Work units typically take hours to complete additionally, the API poll rate is unknown.\n[INFO]: It is recommended to set the delay greater than 1800 seconds (one half hour).\n\n##########"
+fi
+
+echo -e "[INFO]: User ID: $id" | tee -a log.txt
+echo -e "[INFO]: Run ID: $(date +%F-%H%M%S | sha1sum | sed --expression='s/  -//g')" | tee -a log.txt
+echo -e "[INFO]: Chosen delay: $delay seconds\n" | tee -a log.txt
+echo -e "##########\n"
+
+while true; do
+	echo $(date +%F-%H%M%S) | tee -a log.txt
+
+	fetch="$(./script/score-checker $id)"
+	cur_run=$(echo $fetch | awk '{ print $2 }');
+	diff=$(($cur_run-$last_run))
+
+	echo "Previous run: $last_run points" | tee -a log.txt
+	echo "This run: $cur_run points" | tee -a log.txt
+	echo -e "Difference: $diff points\n" | tee -a log.txt
+
+	last_run=$cur_run
+
+	echo "Sleeping $1 seconds..."
+	for (( x=$1; x>=1; x-- )); do
+		sleep 1
+	done
+done
+
