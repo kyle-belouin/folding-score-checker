@@ -8,6 +8,8 @@ Requires:
 * jq
 * Internet connection
 
+![Screenshot](https://user-images.githubusercontent.com/39029459/186545133-ad4b7b2b-aaf6-4884-954f-1d496d611c2b.png)
+
 How to run:
 
 To use the program, you must provide two parameters, your delay (in seconds) for a pause in between checks, and your Folding@Home user ID respectively.
@@ -28,6 +30,4 @@ Attribution:
 This project relies on Stanford's FoldingAtHome API, which they have made publicly available. API requests are simple cURL GETs and do not require any authentication. The object returned is JSON and is readily formatted for use with `jq`.
 
 Source URL being parsed: https://api2.foldingathome.org/uid/$UserID/ where $UserID is your user ID. Because this is an external resource, this structure is subject to change (but it is an API that many people rely on, it should be safe from erroneous changes).
-
-![Screenshot](https://user-images.githubusercontent.com/39029459/186545133-ad4b7b2b-aaf6-4884-954f-1d496d611c2b.png)
 
